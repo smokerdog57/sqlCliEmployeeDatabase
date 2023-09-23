@@ -12,13 +12,12 @@ Installation
 9. After running above steps create, copy and/or confirm the following directory structure and files:
 	assets			// copy from challenge
 	db
-	   connection.sql	// create new file
+	   connection.js	// create new file
 	   index.js		// create new file	   
 	   schema.sql		// create new file
 	   seed.sql		// create new file   
 	node_modules		// confirm: created by npm
 	index.js		// create new file
-	license			// confirm: created by github
 	.gitignore		// create new file
 	package-lock.json	// confirm: created by npm	
 	package.json		// confirm: created by npm
@@ -50,6 +49,8 @@ WHEN I choose to add an employee
 THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
 WHEN I choose to update an employee role
 THEN I am prompted to select an employee to update and their new role and this information is updated in the database 
+WHEN I enter one choice and the terminal has updated with the results based on that choice, 
+THEN I am prompted with the options again
 ```
 
 ## Getting Started
