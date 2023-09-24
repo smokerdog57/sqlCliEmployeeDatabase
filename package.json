@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "dependencies": {
     "inquirer": "^8.2.4",
     "mysql2": "^3.6.1"
@@ -9,7 +10,8 @@
   "main": "index.js",
   "devDependencies": {},
   "scripts": {
-    "test": "manual"
+    "test": "manual",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

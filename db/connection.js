@@ -1,4 +1,4 @@
-const mysql = require("mysql2/promise"); // Use promise-based API
+import mysql from 'mysql2/promise'; // Use promise-based API
 
 async function createDatabaseConnection() {
   try {
@@ -17,4 +17,4 @@ async function createDatabaseConnection() {
   }
 }
 
-module.exports = createDatabaseConnection;
+export {createDatabaseConnection};

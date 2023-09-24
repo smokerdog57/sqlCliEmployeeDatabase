@@ -6,14 +6,13 @@
 // 4. enter cli:  npm start
 
 // import dependencies
-
 import inquirer from 'inquirer';
 import mysql from 'mysql2/promise';
-import { Query } from 'mysql2/typings/mysql/lib/protocol/sequences/Query';
-import { executeQuery } from './db/index.js';
-import { addDepartment } from './db/index.js';
 import { createDatabaseConnection } from './db/connection.js';
-
+import DB from './db/index.js';  // import the DB class and it's methods
+// import { Query } from 'mysql2/typings/mysql/lib/protocol/sequences/Query';
+// import { executeQuery } from './db/index.js';
+// import { addDepartment } from './db/index.js';
 // Prompt for desired query/update
 const questions = [
     {
@@ -45,14 +44,37 @@ async function main() {
             // presetn choices to user and switch based on user's choice
             switch (answers.query) {
                 case '1. view all departments':
+                    try {
+                        console.log('Viewing all departments:');
+                        const db = new DB(connection); // Create an instance of the DB class
+                        const departments = await db.viewAllDepartments();
+
+                        // Display the departments in the terminal
+                        departments.forEach((department) => {
+                            console.log(`ID: ${department.id} | Name: ${department.name}`);
+                        });
+                    } catch (error) {
+                        console.error('Error viewing departments:', error);
+                    }
+                    break;
                 case '2. view all roles':
                 case '3. view all employees':
                     console.log('case 1, 2, or 3 picked');
                     // call executeQuery from /db/index.js constructor method to view all departments, view roles, or view employees.
                     break;
                 case '4. add a department':
-                    console.log('add department selected');
-                    addDepartment();
+                    try {
+                        console.log('Add a department:');
+                        const departmentName = await inquirer.prompt({
+                            type: 'input',
+                            name: 'name',
+                            message: 'Enter the name of the department:',
+                        });
+                        const db = new DB(connection);
+                        await db.addDepartment(departmentName.name);
+                    } catch (error) {
+                        console.error('Error adding a department:', error);
+                    }
                     break;
                 case '5. add a role':
                     console.log('add role selected');
@@ -80,18 +102,6 @@ async function main() {
             console.error(error);
         }
     }
-}
-
-async function addDepartment() {
-    const departmentName = await inquirer.prompt({
-        type: 'input',
-        name: 'name',
-        message: 'Enter the name of the department:',
-    });
-
-    // Call the appropriate database function to add the department
-    await db.addDepartment(departmentName.name);
-    console.log(`Added ${departmentName.name} to the database`)
 }
 
 main();
