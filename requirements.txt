@@ -1,6 +1,6 @@
 # 12 SQL: sql command line Employee Database
 
-Installation
+## Installation
 1. create a new github repository named 'sqlCliEmployeeDatabase'
 2. launch microsoft visual studio Code app
 3. enter cli:  cd ~/bootcamp/homework
@@ -16,8 +16,8 @@ Installation
 	   index.js		// create new file	   
 	   schema.sql		// create new file
 	   seed.sql		// create new file   
-	node_modules		// confirm: created by npm
 	index.js		// create new file
+	node_modules		// confirm: created by npm			
 	.gitignore		// create new file
 	package-lock.json	// confirm: created by npm	
 	package.json		// confirm: created by npm
@@ -51,6 +51,8 @@ WHEN I choose to update an employee role
 THEN I am prompted to select an employee to update and their new role and this information is updated in the database 
 WHEN I enter one choice and the terminal has updated with the results based on that choice, 
 THEN I am prompted with the options again
+WHEN I choose the exit option, 
+THEN the /index.js script is terminated.
 ```
 
 ## Getting Started
@@ -108,3 +110,32 @@ Try to add some additional functionality to your application, such as the abilit
 * Delete departments, roles, and employees.
 
 * View the total utilized budget of a department&mdash;in other words, the combined salaries of all employees in that department.
+
+## Usage to run the app
+
+1. open MS Visual Studio and terminal
+2. enter cli:  mysql -u root -p <when prompted enter password>
+3. enter cli:  source /db/schema.sql
+4. enter cli:  source /db/seed.sql
+5. enter cli:  npm start
+
+## Operational concept
+
+This app is a command-line content management system application designed manage a company's employee database, using Node.js, Inquirer, and MySQL. It uses a combination of sql and js files.  The user is presented with options (inquirer prompt) to query and update the database.  
+ 
+Upon entering the cli command:  mysql -u root -p, sql commands are now accomodated from the command line.  The user then enters the source /db/schema.sql which drops employees database, if it exists, and then recreates and uses the employees database.  The table schemas for department, role, and employee tables are created.  The department table is at the top of the pyramid.  The department id is the department table primary key and is related to the role table through the department id which is a foreign key within the role table.  The role id is the role table primary key and is related to the employee table through the role id which is a foreign key within the employee table.
+
+Upon entering the cli command /db/seed.sql, the employee database is initialized with sample data, including employees, departments, and roles. This seed data matches the table schema that it is being inserted into.
+
+The next command: npm start, kicks off the /index.js script. index.js establishes a connection to the employees database using the connection.js script. The user is then asked to choose one of following options using the inquirer prompt library:
+
+	1. view all departments
+	2. view all roles
+	3. view all employees
+	4. add a department
+	5. add a role
+	6. add an employee
+	7. update an employee's role
+	8. exit
+
+The user then selects an option from the command line.  If one of options 1 through 7 are picked, control is passed to the /db/index.js script.  This script includes a db class with a constructor and a method to do the work for each option.  The results of the work is then returned to /index.js and displayed at the command line.  The user is then presented with the options again.  If option 8 is picked, the index.js script is terminated.

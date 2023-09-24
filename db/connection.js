@@ -1,14 +1,20 @@
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise"); // Use promise-based API
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "Big1blue!",
-  database: "employees"
-});
+async function createDatabaseConnection() {
+  try {
+    const connection = await mysql.createConnection({
+      host: "localhost",
+      user: "root",
+      password: "Big1blue!",
+      database: "employees"
+    });
 
-connection.connect(function (err) {
-  if (err) throw err;
-});
+    console.log("Connected to MySQL database!");
+    return connection;
+  } catch (error) {
+    console.error("Error connecting to the database:", error);
+    throw error; // Rethrow the error to be handled by the calling code
+  }
+}
 
-module.exports = connection;
+module.exports = createDatabaseConnection;
