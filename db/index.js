@@ -1,14 +1,7 @@
-// implement the following methods:
-// Add other methods for your application here:
-// async viewAllRoles() { ... }
-// async viewAllEmployees() { ... 
-// async addRole(roleData) { ... }
-// async addEmployee(employeeData) { ... }
-// async updateEmployeeRole(employeeId, roleId) { ... }
-
 // Dependencies
 import mysql from 'mysql2/promise';
 
+// DB Class, Constructor and methods
 class DB {
   constructor(connection) {
     this.connection = connection;
@@ -38,7 +31,7 @@ class DB {
       throw error;
     }
   }
-  
+
   // view all employee
   async viewAllEmployees() {
     try {
@@ -57,27 +50,13 @@ class DB {
         JOIN department ON role.department_id = department.id
         LEFT JOIN employee AS manager ON employee.manager_id = manager.id
       `;
-      
+
       const [rows] = await this.connection.execute(query); // Execute the query
       return rows;
     } catch (error) {
       throw error;
     }
   }
-  
-  //***********************************************************************************/
-  // id INT AUTO_INCREMENT PRIMARY KEY,
-  //   first_name VARCHAR(30),
-  //   last_name VARCHAR(30),
-  //   role_id INT,
-  //   manager_id INT,    
-
-
-
-
-
-
-
 
   // add Department
   async addDepartment(departmentName) {
@@ -92,6 +71,73 @@ class DB {
     }
   }
 
-}
+  // add role
+  async addRole(title, salary, departmentName) {
+    try {
+      // Look up the department ID based on the entered department name
+      const departmentId = await this.getDepartmentByName(departmentName);
+  
+      if (!departmentId) {
+        console.error(`Department '${departmentName}' not found.`);
+        return; // Return early if department not found
+      }
+  
+      const query = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)';
+      const [result] = await this.connection.execute(query, [title, salary, departmentId]);
+  
+      console.log(`Added role: ${title}`);
+      return result;
+    } catch (error) {
+      console.error('Error adding role:', error);
+      throw error;
+    }
+  }
+  
+  
+  // add an employee
+  async addEmployee(employeeName) {
+    try {
+      const query = 'INSERT INTO employee (name) VALUES (?)';
+      const [result] = await this.connection.execute(query, [employeeName]);
+      console.log(`Added role: ${employeeName}`);
+      return result;
+    } catch (error) {
+      console.error('Error adding employee:', error);
+      throw error;
+    }
+  }
+  // update an employee's role   - this method prompts user (in main program) with list of employees, the user selects the employee from the list and then prompts for the
+  // the new role. this method accepts the employee name and role title as inputs and then modifies the employee table to update the affected columns:  role_id and manager_id.
+  // async updateEmployeeRole(employeeName,employeeRole) {
+  //   try {
+  //     const query = 'INSERT INTO employee (name) VALUES (?)';
+  //     const [result] = await this.connection.execute(query, [employeeRole]);
+  //     console.log(`Added role: ${employeeRole}`);
+  //     return result;
+  //   } catch (error) {
+  //     console.error('Error updating employee role:', error);
+  //     throw error;
+  //   }
+  // }
 
-export default DB;
+
+  async getDepartmentByName(departmentName) {
+    try {
+      const query = 'SELECT id FROM department WHERE name = ?';
+      const [rows] = await this.connection.execute(query, [departmentName]);
+
+      if (rows.length === 0) {
+        // Department not found
+        return null;
+      }
+
+      // Return the department id
+      return rows[0].id;
+    } catch (error) {
+      console.error('Error looking up department id', error);
+      throw error;
+    }
+  }
+};
+
+export default DB;  // export DB class

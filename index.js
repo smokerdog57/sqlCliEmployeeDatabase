@@ -101,9 +101,29 @@ async function main() {
                     }
                     break;
                 case '5. add a role':
-                    console.log('add role selected');
-                    // addRole();
-                    break;
+                    try {
+                        console.log('Add a role:');
+                        const roleTitle = await inquirer.prompt({
+                            type: 'input',
+                            name: 'title',
+                            message: 'Enter the role title:',
+                        });
+                        const roleSalary = await inquirer.prompt({
+                            type: 'input',
+                            name: 'salary',
+                            message: 'Enter the role salary:',
+                        });
+                        const roleDepartment= await inquirer.prompt({
+                            type: 'input',
+                            name: 'department',
+                            message: 'Enter the role department',
+                        });
+                        const db = new DB(connection);
+                        await db.addRole(roleTitle.title, roleSalary.salary, roleDepartment.department);
+                    } catch (error) {
+                        console.error('Error adding a department:', error);
+                    }
+                    break;                    
                 case '6. add an employee':
                     console.log('add employee selected');
                     // addEmployee();
