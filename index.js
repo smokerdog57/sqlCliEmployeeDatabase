@@ -11,9 +11,6 @@ import mysql from 'mysql2/promise';
 import { createDatabaseConnection } from './db/connection.js';
 import DB from './db/index.js';  // import the DB class and it's methods
 // import { Query } from 'mysql2/typings/mysql/lib/protocol/sequences/Query';
-// import { executeQuery } from './db/index.js';
-// import { addDepartment } from './db/index.js';
-// Prompt for desired query/update
 const questions = [
     {
         type: 'list',
@@ -78,7 +75,7 @@ async function main() {
                         const departments = await db.viewAllEmployees();
                         // Display the employees in the terminal
                         departments.forEach((employee) => {
-                            console.log(`ID: ${employee.id} | Name: ${employee. employee_name} |  
+                            console.log(`ID: ${employee.id} | Name: ${employee.employee_name} |  
                             Role: ${employee.role_title} | Salary: ${employee.role_salary} | Department: ${employee.department_name}
                              | Manager: ${employee.manager_name}`);
                         });
@@ -113,7 +110,7 @@ async function main() {
                             name: 'salary',
                             message: 'Enter the role salary:',
                         });
-                        const roleDepartment= await inquirer.prompt({
+                        const roleDepartment = await inquirer.prompt({
                             type: 'input',
                             name: 'department',
                             message: 'Enter the role department',
@@ -123,10 +120,35 @@ async function main() {
                     } catch (error) {
                         console.error('Error adding a department:', error);
                     }
-                    break;                    
+                    break;
                 case '6. add an employee':
-                    console.log('add employee selected');
-                    // addEmployee();
+                    try {
+                        console.log('add an employee');
+                        const employeeFirstName = await inquirer.prompt({
+                            type: 'input',
+                            name: 'firstName',
+                            message: `Enter the employee's first name`,
+                        });
+                        const employeeLastName = await inquirer.prompt({
+                            type: 'input',
+                            name: 'lastName',
+                            message: `Enter the employee's last name`,
+                        });
+                        const employeeRole = await inquirer.prompt({
+                            type: 'input',
+                            name: 'role',
+                            message: `Enter the employee's role`,
+                        });
+                        const employeeManager = await inquirer.prompt({
+                            type: 'input',
+                            name: 'manager',
+                            message: `Enter the employee's manager's full name`,
+                        });
+                        const db = new DB(connection);
+                        await db.addEmployee(employeeFirstName.firstName, employeeLastName.lastName, employeeRole.role, employeeManager.manager);
+                    } catch (error) {
+                        console.error('Error adding an employee', error);
+                    }
                     break;
                 case '7. update an employee role':
                     console.log('update employee role selected')
