@@ -151,10 +151,44 @@ async function main() {
                     }
                     break;
                 case '7. update an employee role':
-                    console.log('update employee role selected')
-                    // updateEmployeeRole();
-                    // call /db/index.js constructor method 
+                    try {
+                        console.log('update an employee role');
+
+                        // Fetch and display a list of employees' full names
+                        const db = new DB(connection);
+                        const employees = await db.viewAllEmployees();
+
+                        if (employees.length === 0) {
+                            console.log('No employees found. Please add employees before updating roles.');
+                            break;
+                        }
+
+                        console.log('Select the employee whose role you would like to update:');
+                        const employeeNames = employees.map((employee) => `${employee.first_name} ${employee.last_name}`);
+
+                        const selectedEmployee = await inquirer.prompt({
+                            type: 'list',
+                            name: 'employeeFullName',
+                            choices: employeeNames,
+                            message: 'Select the employee whose role you would like to update:',
+                        });
+
+                        const employeeNewRole = await inquirer.prompt({
+                            type: 'input',
+                            name: 'newRole',
+                            message: `Enter the employee's new role:`,
+                        });
+
+                        // Update the employee's role
+                        await db.updateEmployeeRole(selectedEmployee.employeeFullName, employeeNewRole.newRole);
+
+                        console.log('Employee role updated successfully.');
+                    } catch (error) {
+                        console.error('Error updating an employee role', error);
+                    }
                     break;
+
+
                 case '8. exit':
                     console.log('app has ended')
                     connection.end();    // close the database connection

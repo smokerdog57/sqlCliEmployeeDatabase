@@ -123,19 +123,37 @@ class DB {
     }
   }
 
-  // update an employee's role   - this method prompts user (in main program) with list of employees, the user selects the employee from the list and then prompts for the
-  // the new role. this method accepts the employee name and role title as inputs and then modifies the employee table to update the affected columns:  role_id and manager_id.
-  // async updateEmployeeRole(employeeName,employeeRole) {
-  //   try {
-  //     const query = 'INSERT INTO employee (name) VALUES (?)';
-  //     const [result] = await this.connection.execute(query, [employeeRole]);
-  //     console.log(`Added role: ${employeeRole}`);
-  //     return result;
-  //   } catch (error) {
-  //     console.error('Error updating employee role:', error);
-  //     throw error;
-  //   }
-  // }
+  // Update an employee's role based on their full name and new role title
+  async updateEmployeeRole(employeeFullName, employeeNewRole) {
+    try {
+      // Get the role ID based on the provided role title
+      const roleId = await this.getRoleByTitle(employeeNewRole);
+
+      // Fetch the employee ID based on the provided full name
+      const employeeId = await this.getEmployeeByName(employeeFullName);
+
+      if (!roleId) {
+        console.error(`Role '${employeeRole}' not found.`);
+        return;
+      }
+
+      if (!employeeId) {
+        console.error(`Employee '${employeeFullName}' not found.`);
+        return;
+      }
+
+      // Update the employee's role in the database
+      const query = 'UPDATE employee SET role_id = ? WHERE id = ?';
+      const [result] = await this.connection.execute(query, [roleId, employeeId]);
+
+      console.log(`Updated ${employeeFullName} with new role ${employeeNewRole}`);
+      return result;
+    } catch (error) {
+      console.error('Error updating employee role:', error);
+      throw error;
+    }
+  }
+
 
 
   // Utility Methods
@@ -185,6 +203,18 @@ class DB {
       return result[0]?.id || null;
     } catch (error) {
       console.error('Error looking up manager id', error);
+      throw error;
+    }
+  }
+
+  // Employee ID lookup
+  async getEmployeeByName(employeeFullName) {
+    try {
+      const query = 'SELECT id FROM employee WHERE CONCAT(first_name, " ", last_name) = ?';
+      const [result] = await this.connection.execute(query, [employeeFullName]);
+      return result[0]?.id || null;
+    } catch (error) {
+      console.error('Error looking up employee id', error);
       throw error;
     }
   }

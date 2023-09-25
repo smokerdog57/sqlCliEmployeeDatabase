@@ -123,11 +123,11 @@ Try to add some additional functionality to your application, such as the abilit
 
 This app is a command-line content management system application designed manage a company's employee database, using Node.js, Inquirer, and MySQL. It uses a combination of sql and js files.  The user is presented with options (inquirer prompt) to query and update the database.  
  
-Upon entering the cli command:  mysql -u root -p, sql commands are now accomodated from the command line.  The user then enters the source ./db/schema.sql which drops employees database, if it exists, and then recreates and uses the employees database.  The table schemas for department, role, and employee tables are created.  The department table is at the top of the pyramid.  The department id is the department table primary key and is related to the role table through the department id which is a foreign key within the role table.  The role id is the role table primary key and is related to the employee table through the role id which is a foreign key within the employee table.
+Upon entering the cli command:  mysql -u root -p, sql commands are now accomadated from the command line.  The user then enters the source ./db/schema.sql which drops employees database, if it exists, and then recreates and uses the employees database.  The table schemas for department, role, and employee tables are created.  The department table is at the top of the pyramid.  The department id is the department table primary key and is related to the role table through the department id which is a foreign key within the role table.  The role id is the role table primary key and is related to the employee table through the role id which is a foreign key within the employee table.
 
 Upon entering the cli command ./db/seed.sql, the employee database is initialized with sample data, including employees, departments, and roles. This seed data matches the table schema that it is being inserted into.
 
-The next command: npm start, kicks off the /index.js script. index.js establishes a connection to the employees database using the connection.js script. The user is then asked to choose one of following options using the inquirer prompt library:
+Upon entering the cli command npm start, the /index.js script is executed. Index.js establishes a connection to the employees database using the connection.js script. The user is then asked to choose one of following options using the inquirer prompt library:
 
 	1. view all departments
 	2. view all roles
@@ -142,13 +142,13 @@ The user then selects an option from the command line.  If one of options 1 thro
 
 ** Test
 
-Test001: execute schema.sql, then verify employees db is created and table schemas are properly created.
-Test002: execute seed.sql, then verify the employees db is seeded with the starter date.
-Test003: execute npm start, then select the first option, view all departments and verify the departments are logged to the terminal.
-Test004: execute npm start, then select the second option, view all roles and verify the roles are logged to the terminal.
-Test005: execute npm start, then select the third option, view all employees and verify the employees are logged to the terminal.
-Test006: execute npm start, then select the fourth option, add a department and verify the new department is added.
-Test007: execute npm start, then select the fifth option, add a role and verify the new role is added.
-Test008: execute npm start, then select the sixth option, add an employee and verify the new employee is added.
+Test001: execute schema.sql, then verify employees db is created and table schemas are properly created.				PASSED
+Test002: execute seed.sql, then verify the employees db is seeded with the starter date.						PASSED
+Test003: execute npm start, then select the first option, view all departments and verify the departments are logged to the terminal.	PASSED
+Test004: execute npm start, then select the second option, view all roles and verify the roles are logged to the terminal.		PASSED	
+Test005: execute npm start, then select the third option, view all employees and verify the employees are logged to the terminal.	PASSED
+Test006: execute npm start, then select the fourth option, add a department and verify the new department is added.			PASSED
+Test007: execute npm start, then select the fifth option, add a role and verify the new role is added.					PASSED
+Test008: execute npm start, then select the sixth option, add an employee and verify the new employee is added.				PASSED
 Test009: execute npm start, then select the seventh option, update an employee's role and verify the employee's role is updated.
 Test010: execute npm start, then select the eighth option, verify the app is exited and terminal prompt is displayed.
