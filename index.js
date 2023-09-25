@@ -54,13 +54,37 @@ async function main() {
                             console.log(`ID: ${department.id} | Name: ${department.name}`);
                         });
                     } catch (error) {
-                        console.error('Error viewing departments:', error);
+                        console.error('Error viewing departments', error);
                     }
                     break;
                 case '2. view all roles':
+                    try {
+                        console.log('Viewing all roles:');
+                        const db = new DB(connection); // Create an instance of the DB class
+                        const departments = await db.viewAllRoles();
+
+                        // Display the roles in the terminal
+                        departments.forEach((role) => {
+                            console.log(`ID: ${role.id} | Role: ${role.title} | Salary: ${role.salary} | Department: ${role.department_name}`);
+                        });
+                    } catch (error) {
+                        console.error('Error viewing roles', error);
+                    }
+                    break;
                 case '3. view all employees':
-                    console.log('case 1, 2, or 3 picked');
-                    // call executeQuery from /db/index.js constructor method to view all departments, view roles, or view employees.
+                    try {
+                        console.log('Viewing all employees:');
+                        const db = new DB(connection); // Create an instance of the DB class
+                        const departments = await db.viewAllEmployees();
+                        // Display the employees in the terminal
+                        departments.forEach((employee) => {
+                            console.log(`ID: ${employee.id} | Name: ${employee. employee_name} |  
+                            Role: ${employee.role_title} | Salary: ${employee.role_salary} | Department: ${employee.department_name}
+                             | Manager: ${employee.manager_name}`);
+                        });
+                    } catch (error) {
+                        console.error('Error viewing employees', error);
+                    }
                     break;
                 case '4. add a department':
                     try {
