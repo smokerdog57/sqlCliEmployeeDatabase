@@ -23,8 +23,9 @@ const questions = [
             '4. add a department',
             '5. add a role',
             '6. add an employee',
-            '7. update an employee role',
-            '8. exit'
+            `7. update an employee's role`,
+            `8. Bonus: update employee's manager`,
+            '9. exit'
         ],
     },
 ];
@@ -142,7 +143,7 @@ async function main() {
                         const employeeManager = await inquirer.prompt({
                             type: 'input',
                             name: 'manager',
-                            message: `Enter the employee's manager's full name`,
+                            message: `Enter the employee's manager's full name, press enter with no input if employee doesn't have a manager`,
                         });
                         const db = new DB(connection);
                         await db.addEmployee(employeeFirstName.firstName, employeeLastName.lastName, employeeRole.role, employeeManager.manager);
@@ -150,9 +151,9 @@ async function main() {
                         console.error('Error adding an employee', error);
                     }
                     break;
-                case '7. update an employee role':
+                case `7. update an employee's role`:
                     try {
-                        console.log('update an employee role');
+                        console.log(`update an employee's role`);
 
                         // Fetch and display a list of employees' full names
                         const db = new DB(connection);
@@ -187,9 +188,45 @@ async function main() {
                         console.error('Error updating an employee role', error);
                     }
                     break;
+                case `8. Bonus: update employee's manager`:
+                    try {
+                        console.log(`update an employee's manager`);
 
+                        // Fetch and display a list of employees' full names
+                        const db = new DB(connection);
+                        const employees = await db.viewAllEmployees();
 
-                case '8. exit':
+                        if (employees.length === 0) {
+                            console.log('No employees found. Please load employees before updating manager.');
+                            break;
+                        }
+
+                        console.log('Select the employee whose manager you would like to update:');
+                        const employeeNames = employees.map((employee) => `${employee.first_name} ${employee.last_name}`);
+
+                        const selectedEmployee = await inquirer.prompt({
+                            type: 'list',
+                            name: 'employeeFullName',
+                            choices: employeeNames,
+                            message: 'Select the employee whose manager you would like to update:',
+                        });
+
+                        const employeeNewManager = await inquirer.prompt({
+                            type: 'input',
+                            name: 'newManager',
+                            message: `Enter the employee's new manager's full name:`,
+                        });
+
+                        // Update the employee's manager
+                        await db.updateEmployeeManager(selectedEmployee.employeeFullName, employeeNewManager.newManager);
+
+                        console.log(`Employee's manager updated successfully.`);
+                    } catch (error) {
+                        console.error(`Error updating an employee's manager`, error);
+                    }
+                    break;
+
+                case '9. exit':
                     console.log('app has ended')
                     connection.end();    // close the database connection
                     continueApp = false; // Set the flag to exit the loop

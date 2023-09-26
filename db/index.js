@@ -98,20 +98,18 @@ class DB {
     try {
       // Get the role ID based on the role title
       const roleId = await this.getRoleByTitle(roleTitle);
-
-      // Get the manager ID based on the manager's full name
-      const managerId = await this.getManagerByName(managerFullName);
-
-      if (!roleId) {
-        console.error(`Role '${roleTitle}' not found.`);
-        return; // Return early if the role is not found
+  
+      let managerId = null; // Initialize managerId as null
+  
+      if (managerFullName) {
+        // If managerFullName is provided, get the manager ID
+        managerId = await this.getPersonByName(managerFullName);
+        if (!managerId) {
+          console.error(`Manager '${managerFullName}' not found.`);
+          return; // Return early if the manager is not found
+        }
       }
-
-      if (!managerId) {
-        console.error(`Manager '${managerFullName}' not found.`);
-        return; // Return early if the manager is not found
-      }
-
+  
       // Insert the new employee into the database
       const query = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
       const [result] = await this.connection.execute(query, [firstName, lastName, roleId, managerId]);
@@ -130,7 +128,7 @@ class DB {
       const roleId = await this.getRoleByTitle(employeeNewRole);
 
       // Fetch the employee ID based on the provided full name
-      const employeeId = await this.getEmployeeByName(employeeFullName);
+      const employeeId = await this.getPersonByName(employeeFullName);
 
       if (!roleId) {
         console.error(`Role '${employeeRole}' not found.`);
@@ -153,8 +151,39 @@ class DB {
       throw error;
     }
   }
+  // Bonus methods
+  // Update Employee's Manager
+  async updateEmployeeManager(employeeFullName, employeeNewManager) {
+    try {
+      // Fetch the employee ID based on the provided full employee name
+      const employeeId = await this.getPersonByName(employeeFullName);
+      console.log(`employee id is ${employeeId}`);
 
+      // Get the new manager ID based on the provided full manager name
+      const managerId = await this.getPersonByName(employeeNewManager);
+      console.log(`manager id is ${managerId}`);
 
+      if (!employeeId) {
+        console.error(`Employee '${employeeFullName}' not found.`);
+        return;
+      }
+
+      if (!managerId) {
+        console.error(`Manager '${employeeNewManager}' not found.`);
+        return;
+      }
+
+      // Update the employee's manager in the database
+      const query = 'UPDATE employee SET manager_id = ? WHERE id = ?';
+      const [result] = await this.connection.execute(query, [managerId,employeeId]);
+
+      console.log(`Updated ${employeeFullName} with new manager  ${employeeNewManager}`);
+      return result;
+    } catch (error) {
+      console.error(`Error updating employee's manager:`, error);
+      throw error;
+    }
+  }
 
   // Utility Methods
   // Department ID lookup
@@ -195,26 +224,14 @@ class DB {
     }
   }
 
-  // Manager ID lookup
-  async getManagerByName(managerFullName) {
+  // Person ID lookup
+  async getPersonByName(personFullName) {
     try {
       const query = 'SELECT id FROM employee WHERE CONCAT(first_name, " ", last_name) = ?';
-      const [result] = await this.connection.execute(query, [managerFullName]);
+      const [result] = await this.connection.execute(query, [personFullName]);
       return result[0]?.id || null;
     } catch (error) {
-      console.error('Error looking up manager id', error);
-      throw error;
-    }
-  }
-
-  // Employee ID lookup
-  async getEmployeeByName(employeeFullName) {
-    try {
-      const query = 'SELECT id FROM employee WHERE CONCAT(first_name, " ", last_name) = ?';
-      const [result] = await this.connection.execute(query, [employeeFullName]);
-      return result[0]?.id || null;
-    } catch (error) {
-      console.error('Error looking up employee id', error);
+      console.error('Error looking up person id', error);
       throw error;
     }
   }
