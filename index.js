@@ -11,6 +11,7 @@ import mysql from 'mysql2/promise';
 import { createDatabaseConnection } from './db/connection.js';
 import DB from './db/index.js';  // import the DB class and it's methods
 // import { Query } from 'mysql2/typings/mysql/lib/protocol/sequences/Query';
+console.clear();
 const questions = [
     {
         type: 'list',
@@ -143,7 +144,7 @@ async function main() {
                         const employeeManager = await inquirer.prompt({
                             type: 'input',
                             name: 'manager',
-                            message: `Enter the employee's manager's full name, press enter with no input if employee doesn't have a manager`,
+                            message: `Enter the employee's manager's full name or type null if employee has no manager`
                         });
                         const db = new DB(connection);
                         await db.addEmployee(employeeFirstName.firstName, employeeLastName.lastName, employeeRole.role, employeeManager.manager);
@@ -214,13 +215,12 @@ async function main() {
                         const employeeNewManager = await inquirer.prompt({
                             type: 'input',
                             name: 'newManager',
-                            message: `Enter the employee's new manager's full name:`,
+                            message: `Enter the employee's manager's full name or type null if employee has no manager`
                         });
 
                         // Update the employee's manager
                         await db.updateEmployeeManager(selectedEmployee.employeeFullName, employeeNewManager.newManager);
-
-                        console.log(`Employee's manager updated successfully.`);
+                       
                     } catch (error) {
                         console.error(`Error updating an employee's manager`, error);
                     }

@@ -93,7 +93,6 @@ class DB {
     }
   }
 
-  // add employee
   async addEmployee(firstName, lastName, roleTitle, managerFullName) {
     try {
       // Get the role ID based on the role title
@@ -101,9 +100,20 @@ class DB {
   
       let managerId = null; // Initialize managerId as null
   
-      if (managerFullName) {
-        // If managerFullName is provided, get the manager ID
+      // Test for empty input
+      if (managerFullName.trim().length === 0) {
+        console.error(`Manager input is empty.`);
+        return; // Return early if manager input is empty
+      }
+      // Test for "null" (case-insensitive)
+      else if (managerFullName.trim().toLowerCase() === 'null') {
+        // Leave managerId as null (do nothing)
+      }
+      // User entered managerFullName that is not empty and not "null"
+      else {
         managerId = await this.getPersonByName(managerFullName);
+  
+        // Validate manager's name
         if (!managerId) {
           console.error(`Manager '${managerFullName}' not found.`);
           return; // Return early if the manager is not found
@@ -120,6 +130,7 @@ class DB {
       throw error;
     }
   }
+  
 
   // Update an employee's role based on their full name and new role title
   async updateEmployeeRole(employeeFullName, employeeNewRole) {
@@ -157,27 +168,34 @@ class DB {
     try {
       // Fetch the employee ID based on the provided full employee name
       const employeeId = await this.getPersonByName(employeeFullName);
-      console.log(`employee id is ${employeeId}`);
-
-      // Get the new manager ID based on the provided full manager name
-      const managerId = await this.getPersonByName(employeeNewManager);
-      console.log(`manager id is ${managerId}`);
-
-      if (!employeeId) {
-        console.error(`Employee '${employeeFullName}' not found.`);
-        return;
+  
+      let managerId = null; // Initialize managerId as null
+  
+      // Test for manager is empty
+      if (employeeNewManager.trim().length === 0) {
+        console.error(`Manager input is empty.`);
+        return; // Return early if the manager is empty
       }
-
-      if (!managerId) {
-        console.error(`Manager '${employeeNewManager}' not found.`);
-        return;
+      
+      // Test for manager is null
+      else if (employeeNewManager.trim().toLowerCase() === 'null') {
+        managerId = null;
       }
-
+      
+      // Test for manager is not empty and not null
+      else {
+        managerId = await this.getPersonByName(employeeNewManager);
+        if (!managerId) {
+          console.error(`Manager '${employeeNewManager}' not found.`);
+          return; // Return early if the manager is not found
+        }
+      }
+  
       // Update the employee's manager in the database
       const query = 'UPDATE employee SET manager_id = ? WHERE id = ?';
-      const [result] = await this.connection.execute(query, [managerId,employeeId]);
-
-      console.log(`Updated ${employeeFullName} with new manager  ${employeeNewManager}`);
+      const [result] = await this.connection.execute(query, [managerId, employeeId]);
+  
+      console.log(`Updated ${employeeFullName} with new manager ${employeeNewManager}`);
       return result;
     } catch (error) {
       console.error(`Error updating employee's manager:`, error);
