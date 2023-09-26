@@ -9,7 +9,8 @@
 6. enter cli:  npm init
 7. enter cli:  npm install --save mysql2
 8. enter cli:  npm install inquirer@8.2.4
-9. After running above steps create, copy and/or confirm the following directory structure and files:
+9. enter cli:  npm install cli-table --save
+10b. After running above steps create, copy and/or confirm the following directory structure and files:
 	assets			// copy from challenge
 	db
 	   connection.js	// create new file
